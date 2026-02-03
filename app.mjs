@@ -55,7 +55,7 @@ run().catch(console.dir);
 app.get('/', (req, res) => {
   //res.send('Hello Express'); //string response
   //res.sendFile('index.html');
-  res.sendFile(join(__dirname, 'public', 'index.html'));
+  res.sendFile(join(__dirname, 'public', 'attend.html'));
 })
 
 
