@@ -9,6 +9,7 @@
 
 <body>
   <h1>welcome to my devOps pages. </h1>
+  <button><a href="/attend.html">click here for attendance tracker with database cxn</a></button>
   <p>{{myVar}}</p>
   <a href="/api/json">json</a>
 
@@ -47,7 +48,7 @@
     
     function sendQuery() {
       const name = document.getElementById('queryName').value;
-      fetch(`/api/query?name=${encodeURIComponent(name)}`) //<255 characters. 
+      fetch(`/api/query?name=${encodeURIComponent(name)}`)
         .then(res => res.json())
         .then(data => {
           document.getElementById('queryResult').textContent = data.message;
@@ -80,3 +81,4 @@
 </body>
 
 </html>
+

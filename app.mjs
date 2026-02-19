@@ -67,6 +67,29 @@ app.get('/inject', (req, res) => {
     });
 })
 
+app.get('/api/json', (req, res) =>{
+  const myVar = 'Hello from server!';
+  res.json({ myVar });
+})
+
+app.get('/api/query', (req, res) => {
+  console.log("client request with query param:", req.query.name); 
+  res.json({"message": req.query.name});
+});
+
+app.get('/api/url/:iaddasfsd', (req, res) => {
+
+  console.log("client request with URL param:", req.params.iaddasfsd); 
+  res.json({"message": `Hi, ${req.params.iaddasfsd}. How are you?`});
+});
+
+
+app.post('/api/body', (req, res) => {
+  // console.log("the body:", req.body); 
+  console.log("client request with body:", req.body.name); 
+  res.json({"message": req.body.name});
+});
+
 // API Health/Endpoints Documentation
 app.get('/api/health', (req, res) => {
   const endpoints = [
