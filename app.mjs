@@ -50,45 +50,14 @@ connectToMongo();
 app.get('/', (req, res) => {
   // res.send('Hello Express'); //string response
   // res.sendFile('index.html'); // <- this don't work w/o imports, assign, and arguements
-  res.sendFile(join(__dirname, 'public', 'attend.html')) ;
+  res.sendFile(join(__dirname, 'public', 'index.html')) ;
 
 })
 
-app.get('/inject', (req, res) => {
-  // Inject a server variable into barry.html: templating view like ejs or pug
-  readFile(join(__dirname, 'public', 'index.html'), 'utf8')
-    .then(html => {
-      // Replace a placeholder in the HTML (e.g., {{myVar}})
-      const injectedHtml = html.replace('{{myVar}}', myVar);
-      res.send(injectedHtml);
-    })
-    .catch(err => {
-      res.status(500).send('Error loading page');
-    });
-})
-
-app.get('/api/json', (req, res) =>{
-  const myVar = 'Hello from server!';
-  res.json({ myVar });
-})
-
-app.get('/api/query', (req, res) => {
-  console.log("client request with query param:", req.query.name); 
-  res.json({"message": req.query.name});
-});
-
-app.get('/api/url/:iaddasfsd', (req, res) => {
-
-  console.log("client request with URL param:", req.params.iaddasfsd); 
-  res.json({"message": `Hi, ${req.params.iaddasfsd}. How are you?`});
-});
 
 
-app.post('/api/body', (req, res) => {
-  // console.log("the body:", req.body); 
-  console.log("client request with body:", req.body.name); 
-  res.json({"message": req.body.name});
-});
+
+
 
 // API Health/Endpoints Documentation
 app.get('/api/health', (req, res) => {
@@ -115,7 +84,7 @@ app.get('/api/health', (req, res) => {
     },
     {
       method: 'POST',
-      path: '/api/attendance',
+      path: '/api/budgets',
       description: 'CREATE - Add new student attendance record',
       bodyExample: {
         studentName: 'John Doe',
@@ -125,12 +94,12 @@ app.get('/api/health', (req, res) => {
     },
     {
       method: 'GET',
-      path: '/api/attendance',
+      path: '/api/budgets',
       description: 'READ - Get all attendance records'
     },
     {
       method: 'PUT',
-      path: '/api/attendance/:id',
+      path: '/api/budgets/:id',
       description: 'UPDATE - Update existing attendance record',
       bodyExample: {
         studentName: 'Jane Doe',
@@ -140,7 +109,7 @@ app.get('/api/health', (req, res) => {
     },
     {
       method: 'DELETE',
-      path: '/api/attendance/:id',
+      path: '/api/budgets/:id',
       description: 'DELETE - Remove attendance record'
     }
   ];
@@ -168,48 +137,68 @@ app.get('/api/class', (req, res) => {
 // CRUD Operations for Attendance
 
 // CREATE - Add student attendance
-app.post('/api/attendance', async (req, res) => {
+app.post('/api/budgets', async (req, res) => {
   try {
-    const { studentName, date, keyword } = req.body;
+    const { name,
+      income,
+      transportation,
+      rent,
+      groceries,
+      utility,
+      household,
+      entertainment,
+      clothes,
+      healthcare,
+      totalExpenses,
+      remaining } = req.body;
     
-    if (!studentName || !date || !keyword) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
+    // if (!studentName || !date || !keyword) {
+    //   return res.status(400).json({ error: 'Missing required fields' });
+    // }
 
     const db = client.db('cis486');
-    const collection = db.collection('attendance');
+    const collection = db.collection('budgets');
     
-    const attendanceRecord = {
-      studentName,
-      date,
-      keyword,
+    const budgetRecord = {
+      name,
+      income,
+      transportation,
+      rent,
+      groceries,
+      utility,
+      household,
+      entertainment,
+      clothes,
+      healthcare,
+      totalExpenses,
+      remaining,
       timestamp: new Date()
     };
     
-    const result = await collection.insertOne(attendanceRecord);
-    res.json({ message: 'Attendance recorded!', id: result.insertedId });
+    const result = await collection.insertOne(budgetRecord);
+    res.json({ message: 'Budget recorded!', id: result.insertedId });
   } catch (error) {
-    console.error('Error creating attendance:', error);
-    res.status(500).json({ error: 'Failed to record attendance' });
+    console.error('Error creating budget:', error);
+    res.status(500).json({ error: 'Failed to record budget' });
   }
 });
 
 // READ - Get all attendance records
-app.get('/api/attendance', async (req, res) => {
+app.get('/api/budgets', async (req, res) => {
   try {
     const db = client.db('cis486');
-    const collection = db.collection('attendance');
+    const collection = db.collection('budgets');
     
-    const records = await collection.find({}).toArray();
-    res.json(records);
+    const budgets = await collection.find({}).toArray();
+    res.json(budgets);
   } catch (error) {
-    console.error('Error reading attendance:', error);
-    res.status(500).json({ error: 'Failed to get attendance records' });
+    console.error('Error reading budgets:', error);
+    res.status(500).json({ error: 'Failed to get budget records' });
   }
 });
 
 // UPDATE - Update attendance record
-app.put('/api/attendance/:id', async (req, res) => {
+app.put('/api/budgets/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { studentName, date, keyword } = req.body;
@@ -234,7 +223,7 @@ app.put('/api/attendance/:id', async (req, res) => {
 });
 
 // DELETE - Delete attendance record
-app.delete('/api/attendance/:id', async (req, res) => {
+app.delete('/api/budgets/:id', async (req, res) => {
   try {
     const { id } = req.params;
     

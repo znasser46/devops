@@ -1,0 +1,17 @@
+.flex-container {
+  display: flex;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  flex-direction: column;
+}
+
+
+.flex-container {
+  background-color: lightblue;
+  margin: 10px;
+  padding: 20px;
+  
+}
+
+
