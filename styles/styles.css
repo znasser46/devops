@@ -8,10 +8,26 @@
 
 
 .flex-container {
-  background-color: lightblue;
-  margin: 10px;
+  background-color: rgb(154, 154, 165);
+ 
   padding: 20px;
+  min-height: 70vh; 
+  width: 100%;
   
 }
 
+.form {
+    height: 400px;
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 10px; 
+  align-items: center;
+}
 
+
+
+
+footer {
+    color: white;
+
+}

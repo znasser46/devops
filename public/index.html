@@ -7,49 +7,35 @@
   <title>Budget</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <link rel="stylesheet" href="../styles/styles.css">
+  <link rel="stylesheet" href="/styles/styles.css">
 </head>
 
-<nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
-  <a class="navbar-brand" href="#">Navbar</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
-    aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNavDropdown">
-    <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Features</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Pricing</a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false">
-          Dropdown link
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-
-
-
 <body>
+  <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">ZN|Budget</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Pricing</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+
+
+
 
   <div class="flex-container">
 
-
+    <div class="form">
     <form id="budgetForm">
       <label for="name">Name:</label>
       <input type="text" id="name" required>
@@ -98,6 +84,7 @@
       <br>
       <button type="submit">Save Budget</button>
     </form>
+    </div>
   </div>
 
 
@@ -108,172 +95,21 @@
 
 
 
-  </div>
-
-
+<div id="message"></div>
 
   <div class="container">
     <h2>Saved Budgets:</h2>
     <div id="budgetList">Loading Budgets...</div>
   </div>
 
-  <script>
-    let editingId = null;
 
 
-    // Handle form submission
-    document.getElementById('budgetForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+  <footer class="navbar navbar-dark bg-dark">© 2026 Zachary Nasser</footer>
 
-      const name = document.getElementById('name').value;
-      const income = document.getElementById('income').value;
-      const transportation = document.getElementById('transportation').value;
-      const rent = document.getElementById('rent').value;
-      const groceries = document.getElementById('groceries').value;
-      const utility = document.getElementById('utility').value;
-      const household = document.getElementById('household').value;
-      const entertainment = document.getElementById('entertainment').value;
-      const clothes = document.getElementById('clothes').value;
-      const healthcare = document.getElementById('healthcare').value;
-
-
-      const totalExpenses =
-        Number(transportation) +
-        Number(rent) +
-        Number(groceries) +
-        Number(utility) +
-        Number(household) +
-        Number(entertainment) +
-        Number(clothes) +
-        Number(healthcare);
-
-      const remaining = Number(income) - totalExpenses;
-
-      try {
-        const url = editingId ? `/api/budgets/${editingId}` : '/api/budgets';
-        const method = editingId ? 'PUT' : 'POST';
-
-        const response = await fetch(url, {
-          method: method,
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name,
-            income,
-            transportation,
-            rent,
-            groceries,
-            utility,
-            household,
-            entertainment,
-            clothes,
-            healthcare,
-            totalExpenses,
-            remaining
-          })
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          showMessage(result.message, 'success');
-          document.getElementById('budgetForm').reset();
-          if (editingId) {
-            editingId = null;
-            document.querySelector('button[type="submit"]').textContent = 'Save Budget';
-          }
-          loadBudgets();
-        } else {
-          showMessage(result.error, 'error');
-        }
-      } catch (error) {
-        showMessage('Error submitting form', 'error');
-      }
-    });
-
-    // Load attendance records
-    async function loadBudgets() {
-      try {
-        const response = await fetch('/api/budgets');
-        const records = await response.json();
-
-        const listDiv = document.getElementById('budgetList');
-
-        if (records.length === 0) {
-          listDiv.innerHTML = '<p>No budget records yet.</p>';
-          return;
-        }
-
-        listDiv.innerHTML = records.map(budget => `
-          <div class="record">
-        <strong>${budget.name}</strong> - Monthly Income: $${budget.income}<br>
-        Expenses: Transportation $${budget.transportation}, Rent $${budget.rent}, Groceries $${budget.groceries}, Utility $${budget.utility}, Household $${budget.household}, Entertainment $${budget.entertainment}, Clothes $${budget.clothes}, Healthcare $${budget.healthcare}<br>
-        <strong>Total Expenses:</strong> $${budget.totalExpenses} | <strong>Remaining:</strong> $${budget.remaining}<br>
-        <small>Recorded on: ${new Date(budget.timestamp).toLocaleString()}</small>
-      </div>
-      <hr>
-    `).join('');
-  } catch (error) {
-    document.getElementById('budgetList').innerHTML = 'Error loading budget records';
-  }
-    }
-
-    // Edit record
-    function editRecord(id, studentName, date, keyword) {
-      editingId = id;
-      document.getElementById('studentName').value = studentName;
-      document.getElementById('date').value = date;
-      document.getElementById('keyword').value = keyword;
-      document.querySelector('button[type="submit"]').textContent = 'Update Attendance';
-      showMessage('Editing record - click Update to save changes', 'success');
-    }
-
-    // Delete record
-    async function deleteRecord(id) {
-      if (!confirm('Are you sure you want to delete this record?')) return;
-
-      try {
-        const response = await fetch(`/api/attendance/${id}`, {
-          method: 'DELETE'
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          showMessage(result.message, 'success');
-          loadAttendance();
-        } else {
-          showMessage(result.error, 'error');
-        }
-      } catch (error) {
-        showMessage('Error deleting record', 'error');
-      }
-    }
-
-    // Show message
-    function showMessage(text, type) {
-      const messageDiv = document.getElementById('message');
-      messageDiv.innerHTML = `<div class="message ${type}">${text}</div>`;
-      setTimeout(() => {
-        messageDiv.innerHTML = '';
-      }, 3000);
-    }
-
-    // Initialize page
-    
-    loadBudgets();
-
-    // Set today's date as default
-    document.getElementById('date').value = 'February 3, 2026';
-  </script>
+  </body>
 
 
 
-
-
-
-
-</body>
+<script src="/js/scripts.js"></script>
 
 </html>

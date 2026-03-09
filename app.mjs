@@ -20,6 +20,8 @@ const myVar = 'injected from server'; // Declare your variable
 app.use(express.static(join(__dirname, 'public')));
 app.use(express.json()); 
 
+app.use('/styles', express.static(join(__dirname, 'styles')));
+app.use('/js', express.static(join(__dirname, 'js')));
 
 
 
@@ -78,11 +80,6 @@ app.get('/api/health', (req, res) => {
       description: 'Show all available API endpoints'
     },
     {
-      method: 'GET',
-      path: '/api/class',
-      description: 'Get class information (course details)'
-    },
-    {
       method: 'POST',
       path: '/api/budgets',
       description: 'CREATE - Add new student attendance record',
@@ -122,21 +119,10 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Class Information API
-app.get('/api/class', (req, res) => {
-  const classInfo = {
-    courseNumber: 'CIS 486',
-    courseName: 'Projects in IS',
-    nickname: 'Full Stack DevOps',
-    semester: 'Spring 2026',
-    calendar: 'Class calendar coming soon!'
-  };
-  res.json(classInfo);
-});
 
-// CRUD Operations for Attendance
+// CRUD Operations for budgets
 
-// CREATE - Add student attendance
+// CREATE - Add a budget to track
 app.post('/api/budgets', async (req, res) => {
   try {
     const { name,
@@ -152,9 +138,9 @@ app.post('/api/budgets', async (req, res) => {
       totalExpenses,
       remaining } = req.body;
     
-    // if (!studentName || !date || !keyword) {
-    //   return res.status(400).json({ error: 'Missing required fields' });
-    // }
+    if (!name || !income || !transportation || !rent || !groceries || !utility || !household || !entertainment || !clothes || !healthcare || !totalExpenses || !remaining) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
 
     const db = client.db('cis486');
     const collection = db.collection('budgets');
@@ -201,24 +187,48 @@ app.get('/api/budgets', async (req, res) => {
 app.put('/api/budgets/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { studentName, date, keyword } = req.body;
+    const { name,
+      income,
+      transportation,
+      rent,
+      groceries,
+      utility,
+      household,
+      entertainment,
+      clothes,
+      healthcare,
+      totalExpenses,
+      remaining,
+     } = req.body;
     
     const db = client.db('cis486');
-    const collection = db.collection('attendance');
+    const collection = db.collection('budgets');
     
     const result = await collection.updateOne(
       { _id: new ObjectId(id) },
-      { $set: { studentName, date, keyword, updatedAt: new Date() } }
+      { $set: { name,
+      income,
+      transportation,
+      rent,
+      groceries,
+      utility,
+      household,
+      entertainment,
+      clothes,
+      healthcare,
+      totalExpenses,
+      remaining,
+      updatedAt: new Date() } }
     );
     
     if (result.matchedCount === 0) {
-      return res.status(404).json({ error: 'Record not found' });
+      return res.status(404).json({ error: 'budget not found' });
     }
     
-    res.json({ message: 'Attendance updated!' });
+    res.json({ message: 'Budget updated!' });
   } catch (error) {
-    console.error('Error updating attendance:', error);
-    res.status(500).json({ error: 'Failed to update attendance' });
+    console.error('Error updating budget:', error);
+    res.status(500).json({ error: 'Failed to update budget' });
   }
 });
 
@@ -228,18 +238,18 @@ app.delete('/api/budgets/:id', async (req, res) => {
     const { id } = req.params;
     
     const db = client.db('cis486');
-    const collection = db.collection('attendance');
+    const collection = db.collection('budgets');
     
     const result = await collection.deleteOne({ _id: new ObjectId(id) });
     
     if (result.deletedCount === 0) {
-      return res.status(404).json({ error: 'Record not found' });
+      return res.status(404).json({ error: 'budget not found' });
     }
     
-    res.json({ message: 'Attendance deleted!' });
+    res.json({ message: 'Budget deleted!' });
   } catch (error) {
-    console.error('Error deleting attendance:', error);
-    res.status(500).json({ error: 'Failed to delete attendance' });
+    console.error('Error deleting budget:', error);
+    res.status(500).json({ error: 'Failed to delete budget' });
   }
 });
 
