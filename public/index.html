@@ -5,111 +5,76 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
   <link rel="stylesheet" href="/styles/styles.css">
 </head>
 
 <body>
   <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
     <a class="navbar-brand" href="#">ZN|Budget</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
-      aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home<span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
-        </li>
-      </ul>
-    </div>
   </nav>
 
-
-
-
-
   <div class="flex-container">
+    <div class="explanation">
+      <h1>Welcome to my Budget Tracker App!</h1>
+    </div>
+    <h2>Enter your name, income and monthly expenses below:</h2>
 
     <div class="form">
-    <form id="budgetForm">
-      <label for="name">Name:</label>
-      <input type="text" id="name" required>
+      <form id="budgetForm">
+        <div class="main">
+          <label for="name">Name:</label>
+          <input type="text" id="name" required>
+
+          <label for="income">Monthly Income:</label>
+          <input type="number" id="income" required>
+        </div>
+
+        <label for="transportation">Transportation:</label>
+        <input type="number" id="transportation" required>
+
+        <label for="rent">Mortgage/rent:</label>
+        <input type="number" id="rent" required>
+
+        <label for="groceries">Food:</label>
+        <input type="number" id="groceries" required>
+
+        <label for="utility">Utility:</label>
+        <input type="number" id="utility" required>
+
+        <label for="household">household:</label>
+        <input type="number" id="household" required>
+
+        <label for="entertainment">Entertainment:</label>
+        <input type="number" id="entertainment" required>
+
+        <label for="clothes">Clothes:</label>
+        <input type="number" id="clothes" required>
+
+        <label for="healthcare">Healthcare:</label>
+        <input type="number" id="healthcare" required>
+
+        <div class="save"><button class="btn btn-dark" type="submit">Save Budget</button></div>
+
+      </form>
+
+    </div>
+    
+  </div>
 
 
-      <label for="income">Monthly Income:</label>
-      <input type="number" id="income" required>
-
-      <br>
-
-      <label for="transportation">Transportation:</label>
-      <input type="number" id="transportation" required>
-
-      <br>
-      <label for="rent">Mortgage/rent:</label>
-      <input type="number" id="rent" required>
-
-      <br>
-      <label for="groceries">Food:</label>
-      <input type="number" id="groceries" required>
-
-      <br>
-      <label for="utility">Utility:</label>
-      <input type="number" id="utility" required>
-
-
-      <br>
-      <label for="household">household:</label>
-      <input type="number" id="household" required>
-
-
-      <br>
-      <label for="entertainment">Entertainment:</label>
-      <input type="number" id="entertainment" required>
-
-      <br>
-      <label for="clothes">Clothes:</label>
-      <input type="number" id="clothes" required>
-
-
-      <br>
-      <label for="healthcare">Healthcare:</label>
-      <input type="number" id="healthcare" required>
-
-
-      <br>
-      <button type="submit">Save Budget</button>
-    </form>
+  <div class="listContainer">
+    <div class="listBG">
+      <div id="message"></div>
+      <h2>Saved Budgets:</h2>
+      <div id="budgetList">Loading Budgets...</div>
     </div>
   </div>
 
-
-
-
-
-
-
-
-
-<div id="message"></div>
-
-  <div class="container">
-    <h2>Saved Budgets:</h2>
-    <div id="budgetList">Loading Budgets...</div>
-  </div>
-
-
-
-  <footer class="navbar navbar-dark bg-dark">© 2026 Zachary Nasser</footer>
-
-  </body>
-
-
+  <footer class="navbar navbar-dark bg-dark">© Zachary Nasser 2026</footer>
+</body>
 
 <script src="/js/scripts.js"></script>
-
 </html>

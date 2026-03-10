@@ -1,31 +1,21 @@
 //app.mjs
-//we are in ES6, use this. 
 import 'dotenv/config'; 
 import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { readFile } from 'fs/promises';  // For async file reading
 import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb';
-
-//const { MongoClient, ServerApiVersion } = require('mongodb');
-
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const uri = process.env.MONGO_URI;  
-const myVar = 'injected from server'; // Declare your variable
-
 
 app.use(express.static(join(__dirname, 'public')));
 app.use(express.json()); 
-
 app.use('/styles', express.static(join(__dirname, 'styles')));
 app.use('/js', express.static(join(__dirname, 'js')));
 
-
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+//Creates New mongo client with settings.
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -34,13 +24,14 @@ const client = new MongoClient(uri, {
   }
 });
 
+//Database connection
 async function connectToMongo() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
+    //Connects to the database client
     await client.connect();
-    // Send a ping to confirm a successful connection
+    //Pings the database client to confirm connection
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    //console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } catch (error) {
     console.error('MongoDB connection error:', error);
   }
@@ -48,17 +39,10 @@ async function connectToMongo() {
 connectToMongo();
 
 
-// middlewares aka endpoints aka 'get to slash' {http verb} to slash {you name ur endpoint}
+// gets the main page, or index
 app.get('/', (req, res) => {
-  // res.send('Hello Express'); //string response
-  // res.sendFile('index.html'); // <- this don't work w/o imports, assign, and arguements
   res.sendFile(join(__dirname, 'public', 'index.html')) ;
-
 })
-
-
-
-
 
 
 // API Health/Endpoints Documentation
@@ -77,37 +61,27 @@ app.get('/api/health', (req, res) => {
     {
       method: 'GET',
       path: '/api/health',
-      description: 'Show all available API endpoints'
+      description: 'This shows the available endpoints'
     },
     {
       method: 'POST',
       path: '/api/budgets',
-      description: 'CREATE - Add new student attendance record',
-      bodyExample: {
-        studentName: 'John Doe',
-        date: 'February 3, 2026',
-        keyword: 'devops'
-      }
+      description: 'CREATE - adds a new budget to the database'
     },
     {
       method: 'GET',
       path: '/api/budgets',
-      description: 'READ - Get all attendance records'
+      description: 'READ - retrieves all budgets'
     },
     {
       method: 'PUT',
       path: '/api/budgets/:id',
-      description: 'UPDATE - Update existing attendance record',
-      bodyExample: {
-        studentName: 'Jane Doe',
-        date: 'February 3, 2026',
-        keyword: 'mongodb'
-      }
+      description: 'UPDATE - Updates an existing budget'
     },
     {
       method: 'DELETE',
       path: '/api/budgets/:id',
-      description: 'DELETE - Remove attendance record'
+      description: 'DELETE - Removes an exising budget'
     }
   ];
 
@@ -121,8 +95,9 @@ app.get('/api/health', (req, res) => {
 
 
 // CRUD Operations for budgets
-
-// CREATE - Add a budget to track
+// CREATE - Add a budget
+//This post request is set up for the budgets api
+//it collects the request body and creates a budget record if the information isnt null
 app.post('/api/budgets', async (req, res) => {
   try {
     const { name,
@@ -138,7 +113,7 @@ app.post('/api/budgets', async (req, res) => {
       totalExpenses,
       remaining } = req.body;
     
-    if (!name || !income || !transportation || !rent || !groceries || !utility || !household || !entertainment || !clothes || !healthcare || !totalExpenses || !remaining) {
+    if (name == null || income == null || transportation == null || rent == null || groceries == null || utility == null || household == null || entertainment == null || clothes == null || healthcare == null || totalExpenses == null || remaining == null) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -160,30 +135,34 @@ app.post('/api/budgets', async (req, res) => {
       remaining,
       timestamp: new Date()
     };
-    
+
+    //Then it takes the budget and inserts it into the database collection an sends a message to the user.
     const result = await collection.insertOne(budgetRecord);
     res.json({ message: 'Budget recorded!', id: result.insertedId });
   } catch (error) {
-    console.error('Error creating budget:', error);
+    //console.error('Error creating budget:', error);
     res.status(500).json({ error: 'Failed to record budget' });
   }
 });
 
-// READ - Get all attendance records
+// READ - retrieves all of the budgets
+// a get request that is also set up for the budget api.
 app.get('/api/budgets', async (req, res) => {
   try {
     const db = client.db('cis486');
     const collection = db.collection('budgets');
     
+    //sends all of the budgets to the api in json format after converting them to an array.
     const budgets = await collection.find({}).toArray();
     res.json(budgets);
   } catch (error) {
-    console.error('Error reading budgets:', error);
+    //console.error('Error reading budgets:', error);
     res.status(500).json({ error: 'Failed to get budget records' });
   }
 });
 
-// UPDATE - Update attendance record
+// UPDATE - Updates an exising budget based on id
+// Specifices the request body and assigns it to an array.
 app.put('/api/budgets/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -204,6 +183,7 @@ app.put('/api/budgets/:id', async (req, res) => {
     const db = client.db('cis486');
     const collection = db.collection('budgets');
     
+    //Updates the collection with the revised information 
     const result = await collection.updateOne(
       { _id: new ObjectId(id) },
       { $set: { name,
@@ -221,18 +201,19 @@ app.put('/api/budgets/:id', async (req, res) => {
       updatedAt: new Date() } }
     );
     
+    //Sends error if there are no records that match
     if (result.matchedCount === 0) {
       return res.status(404).json({ error: 'budget not found' });
     }
     
     res.json({ message: 'Budget updated!' });
   } catch (error) {
-    console.error('Error updating budget:', error);
+    //console.error('Error updating budget:', error);
     res.status(500).json({ error: 'Failed to update budget' });
   }
 });
 
-// DELETE - Delete attendance record
+// DELETE - Deletes an existing budget based on id
 app.delete('/api/budgets/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -240,22 +221,22 @@ app.delete('/api/budgets/:id', async (req, res) => {
     const db = client.db('cis486');
     const collection = db.collection('budgets');
     
+    //deletes the record based on the id
     const result = await collection.deleteOne({ _id: new ObjectId(id) });
-    
+
+    //sends error if there are no matching budgets
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: 'budget not found' });
     }
     
     res.json({ message: 'Budget deleted!' });
   } catch (error) {
-    console.error('Error deleting budget:', error);
+    //console.error('Error deleting budget:', error);
     res.status(500).json({ error: 'Failed to delete budget' });
   }
 });
 
-
-
-//start the server. 
+//starts the server. 
 app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000')
+  //console.log('Server is running on http://localhost:3000')
 })
