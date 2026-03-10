@@ -16,7 +16,6 @@ This app tracks monthly income and expenses based on user input.
 * GCP
 
 
-
 # Deployment Links
 [Render Link](https://dev-devops-auls.onrender.com/)
 
