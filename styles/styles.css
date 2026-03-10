@@ -1,0 +1,62 @@
+.flex-container {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  flex-direction: column;
+  background-color: rgb(154, 154, 165);
+  padding: 20px;
+  min-height: 70vh; 
+  width: 100%;
+}
+
+#budgetForm {
+  display: grid;
+  grid-template-columns: 130px 200px;
+  gap: 10px;
+  align-items: center;
+}
+
+h2 {
+  margin-bottom: 40px;
+}
+
+footer {
+    color: white;
+}
+
+.main {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: 50px 200px 120px 200px;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.save {
+  margin-top: 40px;
+  display: flex;
+  grid-column: span 2;
+  justify-content: center;
+  align-items: center;
+}
+
+.explanation {
+  display: flex;
+  justify-content: left;
+
+}
+
+.listContainer {
+  justify-content: center;
+  background-color: rgb(69, 69, 71);
+  display: flex;
+  padding: 40px;
+}
+
+.listBG {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+}
