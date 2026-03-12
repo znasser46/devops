@@ -37,11 +37,10 @@ jobs:
             cd "$APP_DIR"
 
             git pull
-            npm ci
+            sudo npm ci
 
             pm2 delete "$PM2_NAME" || true
             pm2 start -f app.mjs --name "$PM2_NAME"
 
             pm2 save
-            exit
           EOF
